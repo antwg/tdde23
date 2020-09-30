@@ -1,15 +1,3 @@
-import cv2
-def vcimg_to_list(img):
-    pixlar = []
-    rader = img.shape[0]
-    kolumn = img.shape[1]
-    for x in range(rader):
-        for y in range(kolumn):
-            pixel = img[x, y]
-            pixlar.append((pixel[0], pixel[1], pixel[2]))
-    return pixlar
-
-
 """cvlib module, helper functions for image and tuple manipulation."""
 
 import cv2
@@ -66,10 +54,3 @@ def greyscale_list_to_cvimg(lst, height, width):
             img[y, x] = lst[y * width + x]
 
     return img
-
-img = cv2.imread('image.jpg')
-list_img = cvimg_to_list(img)
-converted_img = rgblist_to_cvimg(list_img, img.shape[0], img.shape[1])    # Bildens dimensioner
-cv2.imshow("converted", converted_img)
-
-cv2.waitKey(0)
