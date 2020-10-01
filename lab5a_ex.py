@@ -52,6 +52,7 @@ def remove_blue(image):
     for x in range(rader):
         for y in range(kolumner):
             pixel = img[x, y]
+            print
             img[x, y] = (0, pixel[1], pixel[2])
 
     cv2.imshow("Blue removed from image", img)
