@@ -1,3 +1,6 @@
+#Anton Wegeström antwe841
+#Christopher Wåtz chrwa634
+#5A. Introduktion till OpenCV, Git och listbyggare
 import cv2
 import math
 import numpy as np
