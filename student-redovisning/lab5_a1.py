@@ -32,14 +32,14 @@ def unsharp_mask(N):
     #find the coordinate for the middle of the array
     middle = N // 2
 
-    for x in range(N):
-        mask += [[negativ_gaussiks_blur(x - middle, y - middle) for y in range(N)]]
+
+    mask = [[negativ_gaussiks_blur(x - middle, y - middle) for y in range(N)]for x in range(N)]
 
     return np.array(mask)
 
 
 def test():
-    img = cv2.imread('image.jpg')
+    img = cv2.imread('landscape.jpeg')
     kernel = np.array(unsharp_mask(11))
     filtered_img = cv2.filter2D(img, -1, kernel)
     cv2.imshow("filtered", filtered_img)
