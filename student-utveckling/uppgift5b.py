@@ -77,17 +77,22 @@ def generator_from_image(orig_list):
 
 #5b3
 def combine_images(hsv_list, condition, generator1, generator2):
-    sky_pixels = list(map(lambda x: x * 255, map(condition, hsv_list)))
+    mask = list(map(condition, hsv_list))
     final_image = []
     for i in range(len(hsv_list)):
-        if sky_pixels[i] == 1:
-            final_image.append(generator1())
-        else:
-            final_image.append(generator2(i))
-    print(sky_pixels)
+        colour = mask[i]
+        pixel1 = generator1(i)
+        pixel2 = generator2(i)
+        hue = pixel1[0] * colour + pixel2[0] * (1 - colour)
+        saturation = pixel1[1] * colour + pixel2[1] * (1 - colour)
+        value = pixel1[2] * colour + pixel2[2] * (1 - colour)
+        final_image.append((hue, saturation, value))
     return final_image
 
-def test():
+def gradient_condition(pixel):
+    return pixel[2]/255
+
+def test1():
     # Lä?s in en bild
     plane_img = cv2.imread("plane.jpg")
 
@@ -110,6 +115,25 @@ def test():
     result = combine_images(hsv_list, condition, generator1, generator2)
 
         # Omvandla resultatet till en riktig bild och visa upp den
+    new_img = rgblist_to_cvimg(result, plane_img.shape[0], plane_img.shape[1])
+    cv2.imshow('Final image', new_img)
+    cv2.waitKey(0)
+
+def test2():
+    plane_img = cv2.imread("plane.jpg")
+    flower_img = cv2.imread("flowers.jpg")
+    gradient_img = cv2.imread("gradient.jpg")
+
+
+    hsv_list = cvimg_to_list(cv2.cvtColor(gradient_img, cv2.COLOR_BGR2HSV))
+    plane_img_list = cvimg_to_list(plane_img)
+    flower_img_list = cvimg_to_list(flower_img)
+
+    generator1 = generator_from_image(flower_img_list)
+    generator2 = generator_from_image(plane_img_list)
+
+    result = combine_images(hsv_list, gradient_condition, generator1, generator2)
+
     new_img = rgblist_to_cvimg(result, plane_img.shape[0], plane_img.shape[1])
     cv2.imshow('Final image', new_img)
     cv2.waitKey(0)
