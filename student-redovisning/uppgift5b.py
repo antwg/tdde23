@@ -1,3 +1,6 @@
+#Anton Wegeström antwe841
+#Christopher Wåtz chrwa634
+#Lab 5b
 import cv2
 import random
 import math
