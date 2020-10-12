@@ -8,7 +8,7 @@ from uppgift5b import *
 
 
 def test_pixel_constraint():
-    #Test for pixel_constraint
+    #Test for pixel_constraint.
     def pixel_checker(pixel):
         """Checks if a given pixel is in the correct range of saturation, hue
         and value."""
