@@ -75,15 +75,13 @@ def generator_from_image(orig_list):
         return orig_list[pixel]
     return gen_func
 
-"""
-orig_img = cv2.imread("plane.jpg")
-orig_list = cvimg_to_list(orig_img)
+def test3():
+    orig_img = cv2.imread("plane.jpg")
+    orig_list = cvimg_to_list(orig_img)
 
-generator = generator_from_image(orig_list)
+    generator = generator_from_image(orig_list)
 
-new_list = [generator(i) for i in range(len(orig_list))]
+    new_list = [generator(i) for i in range(len(orig_list))]
 
-cv2.imshow('original', orig_img)
-cv2.imshow('new', rgblist_to_cvimg(new_list, orig_img.shape[0], orig_img.shape[1]))
-cv2.waitKey(0)
-"""
+    cv2.imshow('new', rgblist_to_cvimg(new_list, orig_img.shape[0], orig_img.shape[1]))
+    cv2.waitKey(0)
