@@ -8,42 +8,19 @@ from uppgift5b import *
 
 
 def test_pixel_constraint():
-    #Test for pixel_constraint.
-    def pixel_checker(pixel):
-        """Checks if a given pixel is in the correct range of saturation, hue
-        and value."""
-        h = pixel[0]
-        s = pixel[1]
-        v = pixel[2]
+    """ performs several test on the pixel constraint function """
 
-        if 100 < h and h < 150 and 50 < s and s < 200 and 100 < v \
-        and v < 255:
-            return 1
+    test_data = (((101, 101, 101), 1), \
+        ((99, 99, 99), 0),\
+        ((100000, 100000, 100000), 0),\
+        ((100, 100, 100), 0),\
+        ((102, 102, 102), 0))
 
-        else:
-            return 0
-    hsv_plane = cv2.cvtColor(cv2.imread("plane.jpg"), cv2.COLOR_BGR2HSV)
-    plane_list = cvimg_to_list(hsv_plane)
-    sky_pixels_result = cv2.cvtColor(cv2.imread("filtered_plane.jpg"), cv2.COLOR_BGR2HSV)
-    sky_pixels_result_list = cvimg_to_list(sky_pixels_result)
+    test_function = pixel_constraint(100, 102, 100, 102, 100, 102)
+    assert(callable(test_function) == True)
 
-    is_sky = pixel_constraint(100, 150, 50, 200, 100, 255)
-    sky_pixels = list(map(lambda x: x * 255, map(is_sky, plane_list)))
-    def greyscale_to_tuple(list):
-        result = []
-        for i in list:
-            result.append((0, 0, i))
-        return result
-    #print(greyscale_to_tuple(sky_pixels))
-    #print(sky_pixels_result_list)
-    def pixel_test(list1, list2):
-        res = 0
-        for i in range(len(list1)):
-            if list1[i] != list2[i]:
-                res = res + 1
-        print(res)
-    pixel_test(greyscale_to_tuple(sky_pixels), sky_pixels_result_list)
-    #assert(greyscale_to_tuple(sky_pixels) == sky_pixels_result_list)
+    for test in test_data:
+        assert test_function(test[0]) == test[1]
 
 
 def test_generator_from_image():
