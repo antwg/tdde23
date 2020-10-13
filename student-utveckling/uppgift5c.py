@@ -48,9 +48,9 @@ def test_pixel_constraint():
 
 def test_generator_from_image():
     test_if_function()
-    test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 0, 0, 0, 0)
-    test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 1, 0, 128, 255)
-    test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 2, 255, 0, 128)
+    test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 0)
+    test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 1)
+    test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 2)
     print('Passed all tests')
 
 
@@ -60,10 +60,11 @@ def test_if_function():
     assert(callable(var) == True)
 
 
-def test_pixel_rgb_values(image_list, pixel, r, g, b):
+def test_pixel_rgb_values(image_list, pixel):
     """Tests if function returns the correct rgb values of a pixel"""
     func = generator_from_image(image_list)
-    assert(func(pixel) == (r, g, b))
+    assert(func(pixel) == (image_list[pixel][0], image_list[pixel][1],
+    image_list[pixel][2]))
 
 
 def test_combine_images():
