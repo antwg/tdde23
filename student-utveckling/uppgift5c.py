@@ -50,38 +50,39 @@ def test_pixel_rgb_values(image_list, pixel):
 def test_combine_images():
     """Test the combine_images function"""
 
-        test_data_1 = (([(1,1,226), (23,24,224), (55,65,227)],\
-         [(123, 123, 123), (50, 50, 50), (123, 123, 123)]),\
-         ([(34,24,224), (54,23,226), (5,98,230)],\
-          [(50, 50, 50), (123, 123, 123), (123, 123, 123)]))
+    test_data_1 = (([(1,1,226), (23,24,224), (55,65,227)],\
+    [(123, 123, 123), (50, 50, 50), (123, 123, 123)]),\
+    ([(34,24,224), (54,23,226), (5,98,230)],\
+    [(50, 50, 50), (123, 123, 123), (123, 123, 123)]))
 
-        test_data_2 = (([(0,0,226), (0,0,224), (0,0,228)],\
-         [(114.69803921568626, 114.69803921568626, 114.69803921568626),\
-         (114.12549019607843, 114.12549019607843, 114.12549019607843),\
-         (115.27058823529413, 115.27058823529413, 115.27058823529413)]),\
-         ([(0,0,300), (0,0,0), (0,0,1000)],\
-         [(135.8823529411765, 135.8823529411765, 135.8823529411765),\
-         (50.0, 50.0, 50.0),\
-         (336.27450980392155, 336.27450980392155, 336.27450980392155)]))
+    test_data_2 = (([(0,0,226), (0,0,224), (0,0,228)],\
+    [(114.69803921568626, 114.69803921568626, 114.69803921568626),\
+    (114.12549019607843, 114.12549019607843, 114.12549019607843),\
+    (115.27058823529413, 115.27058823529413, 115.27058823529413)]),\
+    ([(0,0,300), (0,0,0), (0,0,1000)],\
+    [(135.8823529411765, 135.8823529411765, 135.8823529411765),\
+    (50.0, 50.0, 50.0),\
+    (336.27450980392155, 336.27450980392155, 336.27450980392155)]))
 
-        def generator1(index):
-            return(123, 123, 123)
+    def generator1(index):
+        return(123, 123, 123)
 
-        def generator2(index):
-            return(50, 50, 50)
+    def generator2(index):
+        return(50, 50, 50)
 
-        condition_1 = pixel_constraint(0, 255, 0, 255, 225, 255)
+    condition_1 = pixel_constraint(0, 255, 0, 255, 225, 255)
 
-        def condition_2(pixel):
-            return pixel[2]/255
+    def condition_2(pixel):
+        return pixel[2]/255
 
-        for test in test_data_1:
-            assert combine_images(test[0], condition_1, generator1, generator2) == test[1]
+    for test in test_data_1:
+        assert combine_images(test[0], condition_1, generator1, generator2) == test[1]
 
-        for test in test_data_2:
-            assert combine_images(test[0], condition_2, generator1, generator2) == test[1]
+    for test in test_data_2:
+        assert combine_images(test[0], condition_2, generator1, generator2) == test[1]
 
-        print("combine_images passed all the test!")
+    print("combine_images passed all the test!")
+
 
 def generator_from_image(orig_list):
     """Converts an image in list form to a function returning the
@@ -91,9 +92,9 @@ def generator_from_image(orig_list):
         try:
             return orig_list[pixel]
         except IndexError:
-            return "That pixel does not exist please input anumber between 0 and "\
-             + str(len(orig_list) - 1)
+            return "Generator from Image: That pixel does not exist"
     return gen_func
+
 
 def pixel_constraint(hlow, hhigh, slow, shigh, vlow, vhigh):
     """Returns a function that checks if a given pixel is range of given hsv
@@ -118,26 +119,59 @@ def pixel_constraint(hlow, hhigh, slow, shigh, vlow, vhigh):
                 return 0
 
         except IndexError:
-            return ("The given tuple " + str(pixel) +\
+            return ("Pixel constraint: The given tuple " + str(pixel) +\
             " could not be interperted as a pixel please input tuples with"
             " atleast 3 elements")
 
         except TypeError:
-            return ("The given tuple " + str(pixel) + " had one or more element"
+            return ("Pixel Constraint: The given tuple " + str(pixel) +\
+            " had one or more element"
              " which were not an interger or float")
 
     return pixel_checker
 
-plane_img = cv2.imread("plane.jpg")
-condition = pixel_constraint(100, 150, 50, 200, 100, 255)
 
-hsv_list = cvimg_to_list(cv2.cvtColor(plane_img, cv2.COLOR_BGR2HSV))
-plane_img_list = cvimg_to_list(plane_img)
+def combine_images(hsv_list, condition, generator1, generator2):
+    """Combines two images"""
+    try:
+        mask = list(map(condition, hsv_list))
+        final_image = []
 
-def generator1(index):
-    val = random.random() * 255 if random.random() > 0.99 else 0
-    return (val, val, val)
 
-generator2 = generator_from_image(plane_img_list)
+        for i in range(len(hsv_list)):
+            pixel_weight = mask[i]
+            pixel1 = generator1(i)
+            pixel2 = generator2(i)
+            hue = pixel1[0] * pixel_weight + pixel2[0] * (1 - pixel_weight)
+            saturation = pixel1[1] * pixel_weight + pixel2[1] * (1 - pixel_weight)
+            value = pixel1[2] * pixel_weight + pixel2[2] * (1 - pixel_weight)
+            final_image.append((hue, saturation, value))
 
-result = combine_images([(0,0,0)], condition, generator1, generator2)
+        return final_image
+    except TypeError:
+        if mask[-1] == 0 or mask[-1] == 1:
+            if isinstance(pixel1, str):
+                return pixel1
+            else:
+                return pixel2
+        else:
+            return mask[-1]
+
+
+def test_combine_images2():
+    """Tests combine_images"""
+    plane_img = cv2.imread("plane.jpg")
+    condition = pixel_constraint(100, 150, 50, 200, 100, 255)
+
+    hsv_list = cvimg_to_list(cv2.cvtColor(plane_img, cv2.COLOR_BGR2HSV))
+    plane_img_list = cvimg_to_list(plane_img)
+
+    def generator1(index):
+        val = random.random() * 255 if random.random() > 0.99 else 0
+        return (val, val, val)
+
+    generator2 = generator_from_image([(0,0,0)])
+
+    result = combine_images([(0,0,0),(0,0,0)], condition, generator1, generator2)
+
+    print(result)
