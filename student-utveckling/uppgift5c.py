@@ -82,3 +82,62 @@ def test_combine_images():
             assert combine_images(test[0], condition_2, generator1, generator2) == test[1]
 
         print("combine_images passed all the test!")
+
+def generator_from_image(orig_list):
+    """Converts an image in list form to a function returning the
+        color of a given pixel."""
+    def gen_func(pixel):
+        """Returns the rgb value of a pixel."""
+        try:
+            return orig_list[pixel]
+        except IndexError:
+            return "That pixel does not exist please input anumber between 0 and "\
+             + str(len(orig_list) - 1)
+    return gen_func
+
+def pixel_constraint(hlow, hhigh, slow, shigh, vlow, vhigh):
+    """Returns a function that checks if a given pixel is range of given hsv
+    parameters."""
+    def pixel_checker(pixel):
+        """Checks if a given pixel is in the correct range of saturation, hue
+        and value."""
+        try:
+
+            h = pixel[0]
+            s = pixel[1]
+            v = pixel[2]
+
+            test_if_numeric = h + s + v
+
+            if  hlow < h and h < hhigh\
+            and slow < s and s < shigh\
+            and vlow < v and v < vhigh:
+                return 1
+
+            else:
+                return 0
+
+        except IndexError:
+            return ("The given tuple " + str(pixel) +\
+            " could not be interperted as a pixel please input tuples with"
+            " atleast 3 elements")
+
+        except TypeError:
+            return ("The given tuple " + str(pixel) + " had one or more element"
+             " which were not an interger or float")
+
+    return pixel_checker
+
+plane_img = cv2.imread("plane.jpg")
+condition = pixel_constraint(100, 150, 50, 200, 100, 255)
+
+hsv_list = cvimg_to_list(cv2.cvtColor(plane_img, cv2.COLOR_BGR2HSV))
+plane_img_list = cvimg_to_list(plane_img)
+
+def generator1(index):
+    val = random.random() * 255 if random.random() > 0.99 else 0
+    return (val, val, val)
+
+generator2 = generator_from_image(plane_img_list)
+
+result = combine_images([(0,0,0)], condition, generator1, generator2)
