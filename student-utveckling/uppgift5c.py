@@ -149,13 +149,18 @@ def combine_images(hsv_list, condition, generator1, generator2):
 
         return final_image
     except TypeError:
-        if mask[-1] == 0 or mask[-1] == 1:
+        if not isinstance(pixel1, (int, float)) or not isinstance(pixel2, (int, float)):
             if isinstance(pixel1, str):
                 return pixel1
             else:
                 return pixel2
         else:
-            return mask[-1]
+            error_message = []
+            for elem in mask:
+                if isinstance(elem, str):
+                    if error_message == []:
+                        error_message.append(elem)
+            print(error_message)
 
 
 def test_combine_images2():
