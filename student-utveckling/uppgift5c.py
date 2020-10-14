@@ -50,19 +50,35 @@ def test_pixel_rgb_values(image_list, pixel):
 def test_combine_images():
     """Test the combine_images function"""
 
-    test_data = (([(1,1,226), (23,24,224), (55,65,227)],\
-     [(123, 123, 123), (50, 50, 50), (123, 123, 123)]),\
-     ([(34,24,224), (54,23,226), (5,98,230)],\
-      [(50, 50, 50), (123, 123, 123), (123, 123, 123)]))
+        test_data_1 = (([(1,1,226), (23,24,224), (55,65,227)],\
+         [(123, 123, 123), (50, 50, 50), (123, 123, 123)]),\
+         ([(34,24,224), (54,23,226), (5,98,230)],\
+          [(50, 50, 50), (123, 123, 123), (123, 123, 123)]))
 
-    def generator1(index):
-        return(123, 123, 123)
+        test_data_2 = (([(0,0,226), (0,0,224), (0,0,228)],\
+         [(114.69803921568626, 114.69803921568626, 114.69803921568626),\
+         (114.12549019607843, 114.12549019607843, 114.12549019607843),\
+         (115.27058823529413, 115.27058823529413, 115.27058823529413)]),\
+         ([(0,0,300), (0,0,0), (0,0,1000)],\
+         [(135.8823529411765, 135.8823529411765, 135.8823529411765),\
+         (50.0, 50.0, 50.0),\
+         (336.27450980392155, 336.27450980392155, 336.27450980392155)]))
 
-    def generator2(index):
-        return(50, 50, 50)
+        def generator1(index):
+            return(123, 123, 123)
 
-    condition = pixel_constraint(0, 255, 0, 255, 225, 255)
+        def generator2(index):
+            return(50, 50, 50)
 
-    for test in test_data:
-        assert combine_images(test[0], condition, generator1, generator2) == test[1]
-        assert combine_images(test[0], condition, generator1, generator2) == test[1]
+        condition_1 = pixel_constraint(0, 255, 0, 255, 225, 255)
+
+        def condition_2(pixel):
+            return pixel[2]/255
+
+        for test in test_data_1:
+            assert combine_images(test[0], condition_1, generator1, generator2) == test[1]
+
+        for test in test_data_2:
+            assert combine_images(test[0], condition_2, generator1, generator2) == test[1]
+
+        print("combine_images passed all the test!")
