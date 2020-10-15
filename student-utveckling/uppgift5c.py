@@ -83,7 +83,7 @@ def test_combine_images():
     for test in test_data_2:
         assert combine_images(test[0], condition_2, generator1, generator2) == test[1]
 
-    print("combine_images passed all the test!")
+    print("combine_images passed all the tests!")
 
 
 def generator_from_image(orig_list):
@@ -91,9 +91,10 @@ def generator_from_image(orig_list):
         color of a given pixel."""
     def gen_func(pixel):
         """Returns the rgb value of a pixel."""
-        if len(orig_list) > pixel:
-            raise IndexError('Generator from Image: That pixel does not exist')
-        return orig_list[pixel]
+        try:
+            return orig_list[pixel]
+        except IndexError:
+            raise IndexError("Generator from Image: That pixel does not exist")
 
     return gen_func
 
@@ -111,7 +112,8 @@ def pixel_constraint(hlow, hhigh, slow, shigh, vlow, vhigh):
         if isinstance(pixel[0], str) or \
            isinstance(pixel[1], str) or \
            isinstance(pixel[2], str):
-           raise TypeError('')
+           raise TypeError("Pixel Constraint: The given tuple " +
+           "had one or more element which were not an interger or float")
 
         h = pixel[0]
         s = pixel[1]
@@ -146,18 +148,12 @@ def combine_images(hsv_list, condition, generator1, generator2):
             final_image.append((hue, saturation, value))
 
         return final_image
+
     except IndexError:
-        if isinstance(mask, list):
-            return "Generator from Image: That pixel does not exist"
-        else:
-            return ("Pixel constraint: The given tuple " +\
-            "could not be interperted as a pixel please input tuples with"
-            " atleast 3 elements")
+        raise
 
     except TypeError:
-        return ("Pixel Constraint: The given tuple " +\
-        " had one or more element"
-         " which were not an interger or float")
+        raise
 
 
 def test_combine_images2():
@@ -174,6 +170,6 @@ def test_combine_images2():
 
     generator2 = generator_from_image(plane_img_list)
 
-    result = combine_images([(0,0,1),(0,0,'a')], condition, generator1, generator2)
+    result = combine_images([(0,0,1),(0,0,9)], condition, generator1, generator2)
 
     print(result)
