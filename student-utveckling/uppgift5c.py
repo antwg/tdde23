@@ -7,7 +7,6 @@ from lab5_a import *
 from uppgift5b import *
 
 
-
 def test_pixel_constraint():
     """ performs several test on the pixel constraint function """
 
