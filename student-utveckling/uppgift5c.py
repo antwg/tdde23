@@ -7,6 +7,7 @@ from lab5_a import *
 from uppgift5b import *
 
 
+
 def test_pixel_constraint():
     """ performs several test on the pixel constraint function """
 
@@ -27,6 +28,7 @@ def test_pixel_constraint():
 
 
 def test_generator_from_image():
+    """Tests generator_from_image"""
     test_if_function()
     test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 0)
     test_pixel_rgb_values([(0,0,0), (0,128,255), (255,0,128)], 1)
@@ -89,10 +91,10 @@ def generator_from_image(orig_list):
         color of a given pixel."""
     def gen_func(pixel):
         """Returns the rgb value of a pixel."""
-        try:
-            return orig_list[pixel]
-        except IndexError:
-            return "Generator from Image: That pixel does not exist"
+        if len(orig_list) > pixel:
+            raise IndexError('Generator from Image: That pixel does not exist')
+        return orig_list[pixel]
+
     return gen_func
 
 
@@ -102,31 +104,26 @@ def pixel_constraint(hlow, hhigh, slow, shigh, vlow, vhigh):
     def pixel_checker(pixel):
         """Checks if a given pixel is in the correct range of saturation, hue
         and value."""
-        try:
-
-            h = pixel[0]
-            s = pixel[1]
-            v = pixel[2]
-
-            test_if_numeric = h + s + v
-
-            if  hlow < h and h < hhigh\
-            and slow < s and s < shigh\
-            and vlow < v and v < vhigh:
-                return 1
-
-            else:
-                return 0
-
-        except IndexError:
-            return ("Pixel constraint: The given tuple " + str(pixel) +\
-            " could not be interperted as a pixel please input tuples with"
+        if len(pixel) != 3:
+            raise IndexError("Pixel constraint: The given tuple " +\
+            "could not be interperted as a pixel please input tuples with"
             " atleast 3 elements")
+        if isinstance(pixel[0], str) or \
+           isinstance(pixel[1], str) or \
+           isinstance(pixel[2], str):
+           raise TypeError('')
 
-        except TypeError:
-            return ("Pixel Constraint: The given tuple " + str(pixel) +\
-            " had one or more element"
-             " which were not an interger or float")
+        h = pixel[0]
+        s = pixel[1]
+        v = pixel[2]
+
+        if  hlow < h and h < hhigh\
+        and slow < s and s < shigh\
+        and vlow < v and v < vhigh:
+            return 1
+
+        else:
+            return 0
 
     return pixel_checker
 
@@ -134,6 +131,7 @@ def pixel_constraint(hlow, hhigh, slow, shigh, vlow, vhigh):
 def combine_images(hsv_list, condition, generator1, generator2):
     """Combines two images"""
     try:
+        mask = 0
         mask = list(map(condition, hsv_list))
         final_image = []
 
@@ -148,20 +146,18 @@ def combine_images(hsv_list, condition, generator1, generator2):
             final_image.append((hue, saturation, value))
 
         return final_image
-    except TypeError:
-        if not isinstance(pixel1, (tuple)) or not isinstance(pixel2, (tuple)):
-            if isinstance(pixel1, str):
-                print(pixel1)
-            else:
-                print(pixel2)
+    except IndexError:
+        if isinstance(mask, list):
+            return "Generator from Image: That pixel does not exist"
         else:
-            print(pixel_weight)
-            # error_message = []
-            # for elem in mask:
-            #     if isinstance(elem, str):
-            #         if error_message == []:
-            #             error_message.append(elem)
-            # print(error_message[0])
+            return ("Pixel constraint: The given tuple " +\
+            "could not be interperted as a pixel please input tuples with"
+            " atleast 3 elements")
+
+    except TypeError:
+        return ("Pixel Constraint: The given tuple " +\
+        " had one or more element"
+         " which were not an interger or float")
 
 
 def test_combine_images2():
@@ -178,6 +174,6 @@ def test_combine_images2():
 
     generator2 = generator_from_image(plane_img_list)
 
-    result = combine_images([(0,0,1),(0,0)], condition, generator1, generator2)
+    result = combine_images([(0,0,1),(0,0,'a')], condition, generator1, generator2)
 
     print(result)
