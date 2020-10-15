@@ -149,18 +149,19 @@ def combine_images(hsv_list, condition, generator1, generator2):
 
         return final_image
     except TypeError:
-        if not isinstance(pixel1, (int, float)) or not isinstance(pixel2, (int, float)):
+        if not isinstance(pixel1, (tuple)) or not isinstance(pixel2, (tuple)):
             if isinstance(pixel1, str):
-                return pixel1
+                print(pixel1)
             else:
-                return pixel2
+                print(pixel2)
         else:
-            error_message = []
-            for elem in mask:
-                if isinstance(elem, str):
-                    if error_message == []:
-                        error_message.append(elem)
-            print(error_message)
+            print(pixel_weight)
+            # error_message = []
+            # for elem in mask:
+            #     if isinstance(elem, str):
+            #         if error_message == []:
+            #             error_message.append(elem)
+            # print(error_message[0])
 
 
 def test_combine_images2():
@@ -175,8 +176,8 @@ def test_combine_images2():
         val = random.random() * 255 if random.random() > 0.99 else 0
         return (val, val, val)
 
-    generator2 = generator_from_image([(0,0,0)])
+    generator2 = generator_from_image(plane_img_list)
 
-    result = combine_images([(0,0,0),(0,0,0)], condition, generator1, generator2)
+    result = combine_images([(0,0,1),(0,0)], condition, generator1, generator2)
 
     print(result)

@@ -1,0 +1,7 @@
+﻿generator_from_image: IndexError. Om vi väljer en pixel som inte existerar I listan får vi ett index error
+
+pixel_constraint: IndexError. Om det finns för få element I tupeln får vi ett index error när vi kallar på elementet
+
+pixel_constraint: TypeError. När vi försöker addera srt och int får vi ett type error, vi testar att addera så för att få ett error om ett av elementen är en string
+
+combine_images: TypeError. Om underfunktionerna returnerar ett error får combine_images en string istället för en tuple. När pixel_weight, pixel1 eller pixel2 antar ett värde som är en sträng kommer vi få en type error.
