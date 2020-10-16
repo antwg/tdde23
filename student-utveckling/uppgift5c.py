@@ -154,6 +154,6 @@ def test_combine_images2():
 
     generator2 = generator_from_image(plane_img_list)
 
-    result = combine_images([(0,0,1),(0,0,9)], condition, generator1, generator2)
+    result = combine_images([(0,0,1),(0,0,'a')], condition, generator1, generator2)
 
     print(result)
