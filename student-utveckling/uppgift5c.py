@@ -1,3 +1,7 @@
+#Anton Wegeström antwe841
+#Christopher Wåtz chrwa634
+#Uppgift 5c
+
 import cv2
 import random
 import math
